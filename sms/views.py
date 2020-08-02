@@ -23,7 +23,7 @@ def registerView(request):
 
 def home(request):
     my_form = RawSmsForm()
-    headers = {'Authorization': 'Bearer' + ' ' + 'ADdceqecfncdq1pG5ZVwUYaNim12', 'Content-Type': 'application/json' }
+    headers = {'Authorization': 'Bearer' + ' ' + '***********', 'Content-Type': 'application/json' }
     sub = False
     address = str(request.POST.get('address'))
     address = address.split(",") 
@@ -40,13 +40,13 @@ def home(request):
                     data = {
                         "outboundSMSMessageRequest":{ 
                             "address":"tel:+225" +  address, 
-                            "senderAddress":"tel:+22577552217", 
+                            "senderAddress":"tel:+225********", 
                             "outboundSMSTextMessage":{ 
                             "message": message 
                                     } 
                                 } 
                             }
-                    api_url = "https://api.orange.com/smsmessaging/v1/outbound/tel%3A%2B22577552217/requests"
+                    api_url = "https://api.orange.com/smsmessaging/v1/outbound/tel%3A%2B225********/requests"
                     response = requests.post( api_url, json=data, headers=headers)
                     if response.status_code == 201:
                         sub = True
@@ -85,8 +85,6 @@ def csvgroup(request):
                 if  created:
                             sub = True
                 csvreader = csv.reader(file)
-            # Do whatever checks you want here
-            # Raise ValidationError if checks fail
         except csv.Error:
             raise ValidationError('Failed to parse the CSV file')
 
@@ -109,7 +107,7 @@ def statistiques(request):
 def signup(request):
     address = "tel:+225" + str(request.POST.get('username'))
     if request.method == 'POST':
-        headers = {'Authorization': 'Bearer' + ' ' + 'ADdceqecfncdq1pG5ZVwUYaNim12', 'Content-Type': 'application/json' }
+        headers = {'Authorization': 'Bearer' + ' ' + 'TOKEN', 'Content-Type': 'application/json' }
         form = SignUpForm(request.POST)
         vcode = get_random_string(4,'0123456789')
         if form.is_valid():
@@ -124,13 +122,13 @@ def signup(request):
             data = {
                 "outboundSMSMessageRequest":{ 
                     "address": address, 
-                    "senderAddress":"tel:+22577552217", 
+                    "senderAddress":"tel:+225********", 
                     "outboundSMSTextMessage":{ 
                     "message": "Bienvenue sur HSMS, votre code de validation est :  "  + vcode 
                             } 
                         } 
                     }
-            api_url = "https://api.orange.com/smsmessaging/v1/outbound/tel%3A%2B22577552217/requests"
+            api_url = "https://api.orange.com/smsmessaging/v1/outbound/tel%3A%2B225*******/requests"
             response = requests.post( api_url, json=data, headers=headers)
             return redirect('/verif')
     else:
@@ -176,7 +174,7 @@ def liste(request):
 def sendcsv(request):
     sub = False
     choix = Groupe.objects.values('groupe').annotate(dcount=Count('groupe'))
-    headers = {'Authorization': 'Bearer' + ' ' + 'ADdceqecfncdq1pG5ZVwUYaNim12', 'Content-Type': 'application/json' }
+    headers = {'Authorization': 'Bearer' + ' ' + 'TOKEN', 'Content-Type': 'application/json' }
     if request.method =='POST':
         form =CsvForm(request.POST)
         choix = request.POST.get('groupe')
@@ -194,7 +192,7 @@ def sendcsv(request):
                             } 
                         } 
                     }
-            api_url = "https://api.orange.com/smsmessaging/v1/outbound/tel%3A%2B22577552217/requests"
+            api_url = "https://api.orange.com/smsmessaging/v1/outbound/tel%3A%2B225*****/requests"
             response = requests.post( api_url, json=data, headers=headers)
             if response.status_code == 201:
                 created = Sms.objects.create(
@@ -217,7 +215,7 @@ def sendliste(request):
     address = str(request.POST.get('liste'))
     address = address.split(",") 
     message = request.POST.get('message')
-    headers = {'Authorization': 'Bearer' + ' ' + 'ADdceqecfncdq1pG5ZVwUYaNim12', 'Content-Type': 'application/json' }
+    headers = {'Authorization': 'Bearer' + ' ' + 'TOKEN', 'Content-Type': 'application/json' }
     form = SendlisteForm()
     if request.method =='POST':
         form = SendlisteForm(request.POST)
@@ -227,13 +225,13 @@ def sendliste(request):
                 data = {
                     "outboundSMSMessageRequest":{ 
                     "address":"tel:+225" +  address, 
-                    "senderAddress":"tel:+22577552217", 
+                    "senderAddress":"tel:+225******", 
                     "outboundSMSTextMessage":{ 
                     "message": message 
                             } 
                         } 
                 }
-                api_url = "https://api.orange.com/smsmessaging/v1/outbound/tel%3A%2B22577552217/requests"
+                api_url = "https://api.orange.com/smsmessaging/v1/outbound/tel%3A%2B225*******/requests"
                 response = requests.post( api_url, json=data, headers=headers)
                 if response.status_code == 201:
                     created = Sms.objects.create(
@@ -252,5 +250,5 @@ def sendliste(request):
 
 
 
-# info = requests.get('https://api.orange.com/sms/admin/v1/contracts', headers=headers).json()
+# GET YOUR SMS STATUS = requests.get('https://api.orange.com/sms/admin/v1/contracts', headers=headers).json()
 # info = json.loads(info)
