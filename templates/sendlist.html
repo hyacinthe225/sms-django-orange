@@ -1,0 +1,285 @@
+{% if user.is_authenticated %}
+
+<!DOCTYPE html>
+<html lang="fr">
+{% load static %}
+<head>
+
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>SB Admin 2 - Dashboard</title>
+  
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+   <script
+  src="https://code.jquery.com/jquery-3.4.1.min.js"
+  integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+  crossorigin="anonymous"></script>
+  <script
+  src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
+  integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
+  crossorigin="anonymous"></script>
+
+  <script src="{% static 'js/jquery.caret.min.js' %}" ></script>
+  <script src="{% static 'js/jquery.tag-editor.js' %}"></script>
+  <script src="{% static 'js/jquery.tag-editor.min.js' %}"></script>
+
+  <script>
+$(document).ready(function(){
+		//when the select changes:
+    $('.colorPicker').on("change", function(){
+        //set the value of the input to the value of the select.
+    		$('.choix').val($(this).val());
+    });
+});
+</script>
+  <script>
+        // jQuery UI autocomplete extension - suggest labels may contain HTML tags
+        // github.com/scottgonzalez/jquery-ui-extensions/blob/master/src/autocomplete/jquery.ui.autocomplete.html.js
+        (function($){var proto=$.ui.autocomplete.prototype,initSource=proto._initSource;function filter(array,term){var matcher=new RegExp($.ui.autocomplete.escapeRegex(term),"i");return $.grep(array,function(value){return matcher.test($("<div>").html(value.label||value.value||value).text());});}$.extend(proto,{_initSource:function(){if(this.options.html&&$.isArray(this.options.source)){this.source=function(request,response){response(filter(this.options.source,request.term));};}else{initSource.call(this);}},_renderItem:function(ul,item){return $("<li></li>").data("item.autocomplete",item).append($("<a></a>")[this.options.html?"html":"text"](item.label)).appendTo(ul);}});})(jQuery);
+
+        var cache = {};
+        function googleSuggest(request, response) {
+            var term = request.term;
+            if (term in cache) { response(cache[term]); return; }
+            $.ajax({
+                url: 'https://query.yahooapis.com/v1/public/yql',
+                dataType: 'JSONP',
+                data: { format: 'json', q: 'select * from xml where url="http://google.com/complete/search?output=toolbar&q='+term+'"' },
+                success: function(data) {
+                    var suggestions = [];
+                    try { var results = data.query.results.toplevel.CompleteSuggestion; } catch(e) { var results = []; }
+                    $.each(results, function() {
+                        try {
+                            var s = this.suggestion.data.toLowerCase();
+                            suggestions.push({label: s.replace(term, '<b>'+term+'</b>'), value: s});
+                        } catch(e){}
+                    });
+                    cache[term] = suggestions;
+                    response(suggestions);
+                }
+            });
+        }
+
+        $(function() {
+            $('#hero-demo').tagEditor({
+                placeholder: 'Enter tags ...',
+                autocomplete: { source: googleSuggest, minLength: 3, delay: 250, html: true, position: { collision: 'flip' } }
+            });
+
+            $('.tag').tagEditor({ initialTags: [], delimiter: ', ' }).attr('readonly', true);
+
+            function tag_classes(field, editor, tags) {
+                $('li', editor).each(function(){
+                    var li = $(this);
+                    if (li.find('.tag-editor-tag').html() == 'red') li.addClass('red-tag');
+                    else if (li.find('.tag-editor-tag').html() == 'green') li.addClass('green-tag')
+                    else li.removeClass('red-tag green-tag');
+                });
+            }
+            $('#demo6').tagEditor({ initialTags: ['custom', 'class', 'red', 'green', 'demo'], onChange: tag_classes });
+            tag_classes(null, $('#demo6').tagEditor('getTags')[0].editor); // or editor == $('#demo6').next()
+        });
+
+        if (~window.location.href.indexOf('http')) {
+            (function() {var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;po.src = 'https://apis.google.com/js/plusone.js';var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);})();
+            (function(d, s, id) {var js, fjs = d.getElementsByTagName(s)[0];if (d.getElementById(id)) return;js = d.createElement(s); js.id = id;js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.4&appId=114593902037957";fjs.parentNode.insertBefore(js, fjs);}(document, 'script', 'facebook-jssdk'));
+            !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
+            $('#github_social').html('\
+                <iframe style="float:left;margin-right:15px" src="//ghbtns.com/github-btn.html?user=Pixabay&repo=jQuery-tagEditor&type=watch&count=true" allowtransparency="true" frameborder="0" scrolling="0" width="110" height="20"></iframe>\
+                <iframe style="float:left;margin-right:15px" src="//ghbtns.com/github-btn.html?user=Pixabay&repo=jQuery-tagEditor&type=fork&count=true" allowtransparency="true" frameborder="0" scrolling="0" width="110" height="20"></iframe>\
+            ');
+        }
+    </script>
+
+
+ <script>
+$(document).ready(function(e) {
+ 
+  $('#message').keyup(function() {
+ 
+    var nombreCaractere = $(this).val().length;
+    var nombreSms = ~~(nombreCaractere / 160) + 1 ;
+    var nombreMots = jQuery.trim($(this).val()).split(' ').length;
+    if($(this).val() === '') {
+     	nombreMots = 0;
+    }
+ 
+    var msg = ' ' + nombreMots + ' mot(s) - ' + nombreCaractere + ' Caractere(s) / 160' + ' - ' + nombreSms + ' SMS';
+    $('#compteur').text(msg);
+    if (nombreCaractere == 160) { alert("Vous êtes à votre deuxième SMS"); } else { $('#compteur').removeClass("mauvais"); }
+ 
+  })
+ 
+});
+</script>
+
+
+  <!-- Custom fonts for this template-->
+  <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
+  {% comment %} <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet"> {% endcomment %}
+
+  <!-- Custom styles for this template-->
+  <link href="{% static 'css/sb-admin-2.min.css' %}" rel="stylesheet">
+  <link href="{% static 'css/perso.css' %}" rel="stylesheet">
+  <link href="{% static 'css/jquery.tag-editor.css' %}" rel="stylesheet">
+  
+ 
+</head>
+
+<body id="page-top">
+
+  <!-- Page Wrapper -->
+  <div id="wrapper">
+
+    <!-- Sidebar -->
+    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+      <!-- Sidebar - Brand -->
+      <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/">
+        <div class="sidebar-brand-icon">
+        <img src="{% static 'img/user.png' %}" height="40">
+         
+        </div>
+        <div class="sidebar-brand-text mx-3">{{request.user.username}} </div>
+      </a>
+
+      <!-- Divider -->
+      <hr class="sidebar-divider my-0">
+
+      <!-- Nav Item - Dashboard -->
+      <li class="nav-item active">
+        <a class="nav-link" href="/">
+          <i class="fas fa-fw fa-tachometer-alt"></i>
+          <span>Tableau de bord</span></a>
+       
+      </li>
+      <li class="nav-item ">
+      <a class="nav-link" href="/statistiques"> <i class="fa fa-history"></i>  Historique d'envoi </a>
+      </li>
+      <li class="nav-item ">
+      <a class="nav-link" href="/liste"> <i class="fa fa-users"></i> Liste d'envoi </a>
+      </li>
+      <li class="nav-item ">
+      <a class="nav-link" href="/csvgroup"> <i class="fa fa-file-excel-o"></i>  Groupe CSV </a>
+      </li>
+    </ul>
+    <!-- End of Sidebar -->
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+      <!-- Main Content -->
+      <div id="content">
+
+        <!-- Topbar -->
+        <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+          <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+            <i class="fa fa-bars"></i>
+          </button>
+
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item dropdown no-arrow d-sm-none">
+              <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-search fa-fw"></i>
+              </a>
+              <!-- Dropdown - Messages -->
+              <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in" aria-labelledby="searchDropdown">
+                <form class="form-inline mr-auto w-100 navbar-search">
+                  <div class="input-group">
+                    <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">
+                    <div class="input-group-append">
+                      <button class="btn btn-primary" type="button">
+                        <i class="fas fa-search fa-sm"></i>
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </li>
+
+            <div class="topbar-divider d-none d-sm-block"></div>
+
+            <!-- Nav Item - User Information -->
+            <li class="nav-item dropdown no-arrow">
+              <a class="nav-link dropdown-toggle" href="/login" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Logout</span>
+                {% comment %} <img class="img-profile rounded-circle" src="{% static 'img/dodji.jpg' %}"> {% endcomment %}
+                <i class="fa fa-power-off"></i>
+              </a>
+            </li>
+          </ul>
+        </nav>
+        <div class="container-fluid">
+
+          <!-- Page Heading -->
+          <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">
+              
+             {{ info }}Envoi de message</h1>
+             
+            <a href="/" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fa fa-home"></i> Retour à l'accueil</a>
+          </div>
+          
+          <div class="col-md-10">
+              <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                {% for message in messages %}
+                <div class="mauvais">
+                    <strong>{{message|safe}}</strong>
+                </div>
+                {% endfor %}
+                
+                {% if sub %}
+                        <div class="success">
+                        Message envoyé avec succès
+                        </div>
+                {% else %}
+
+                    
+                  <form method="POST">
+                    {% csrf_token %}
+                   
+                    <div class="row">
+                         <div class="col-md-4">
+                            <select class="colorPicker form-control" >
+                            <option value="">Aucun groupe choisi</option>
+                            {% for liste in liste %}
+                            <option value="{{liste.numeros}}">{{liste.nom}}</option>
+                            {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-8">
+                            {{form.liste}}
+                        </div>
+                    </div>
+                    <label for="id_nom">Message :</label>
+                    {{form.message}}
+                    <br>
+                    <button type="submit" class="btn btn-primary">ENVOYER</button>
+                    <p id="compteur">0 mots - 0 Caractere / 160 - 0 messages</p>
+                  </form>
+                {% endif %}
+                
+                </div>
+              </div>
+            </div>
+      
+      </div>
+    </div>
+  </div>
+
+</body>
+
+</html>
+{% else %}
+ACCES NON AUTORISE
+{% endif%}                    
+                    
+                    
+                    

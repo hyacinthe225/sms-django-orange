@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+	<title>Hsms - INSCRIPTION</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--===============================================================================================-->	
+	<link rel="icon" type="image/png" href="images/icons/favicon.ico"/>
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="{% static 'fonts/font-awesome-4.7.0/css/font-awesome.min.css' %}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="{% static 'fonts/Linearicons-Free-v1.0.0/icon-font.min.css' %}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="{% static 'vendor/animate/animate.css' %}">
+<!--===============================================================================================-->	
+	<link rel="stylesheet" type="text/css" href="{% static 'vendor/css-hamburgers/hamburgers.min.css' %}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="{% static 'vendor/animsition/css/animsition.min.css' %}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="{% static 'vendor/select2/select2.min.css' %}">
+<!--===============================================================================================-->	
+	<link rel="stylesheet" type="text/css" href="{% static 'vendor/daterangepicker/daterangepicker.css' %}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="{% static 'css2/util.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'css2/main.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/perso.css' %}">
+<!--===============================================================================================-->
+</head>
+<body>
+	
+	<div class="limiter">
+		<div class="container-login100">
+			<div class="wrap-login100 p-l-55 p-r-55 p-t-65 p-b-50">
+				<form method="POST">
+					<span class="login100-form-title p-b-33">
+						INSCRIPTION
+					</span>
+            <div class=" mauvais" data-validate="Password is required">
+          {{ form.username.errors}}
+          <br>
+          {{ form.password2.errors}}
+          </div>
+            {% csrf_token %}
+					<div class="wrap-input100 validate-input" data-validate = "Valid email is required: ex@abc.xyz">
+					{{ form.username }}
+          
+						<span class="focus-input100-1"></span>
+						<span class="focus-input100-2"></span>
+					</div>
+
+					<div class="wrap-input100 rs1 validate-input" data-validate="Password is required">
+					
+            {{ form.password1 }}
+             {{ form.password1.errors}}
+						<span class="focus-input100-1"></span>
+						<span class="focus-input100-2"></span>
+					</div>
+          <div class="wrap-input100 rs1 validate-input" data-validate="Password is required">
+            {{ form.password2 }}
+						<span class="focus-input100-1"></span>
+						<span class="focus-input100-2"></span>
+					</div>
+          <br>
+          
+					<div class="container-login100-form-btn m-t-20">
+						<button class="login100-form-btn">
+							INSCRIPTION
+						</button>
+					</div>
+
+					<div class="text-center p-t-45 p-b-4">
+					</div>
+
+					<div class="text-center">
+
+						<a href="/login" class="txt2 hov1">
+							Connectez-vous ici !
+						</a>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	
+
+	
+<!--===============================================================================================-->
+	<script src="vendor/jquery/jquery-3.2.1.min.js"></script>
+<!--===============================================================================================-->
+	<script src="vendor/animsition/js/animsition.min.js"></script>
+<!--===============================================================================================-->
+	<script src="vendor/bootstrap/js/popper.js"></script>
+	<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+<!--===============================================================================================-->
+	<script src="vendor/select2/select2.min.js"></script>
+<!--===============================================================================================-->
+	<script src="vendor/daterangepicker/moment.min.js"></script>
+	<script src="vendor/daterangepicker/daterangepicker.js"></script>
+<!--===============================================================================================-->
+	<script src="vendor/countdowntime/countdowntime.js"></script>
+<!--===============================================================================================-->
+	<script src="js/main.js"></script>
+
+</body>
+</html>
+{% comment %} {% block content %}
+  <h2>Sign up</h2>
+  <form method="post">
+    
+    Telephone
+    
+    code
+    {{ form.username }}
+    {{ form.username.errors}}
+    password
+    {{ form.password1 }}
+    {{ form.password1.errors}}
+
+     Confirmation password
+    {{ form.password2 }}
+    {{ form.password2.errors}}
+    <button type="submit">Sign up</button>
+  </form>
+{% endblock %} {% endcomment %}
